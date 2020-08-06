@@ -3,6 +3,14 @@ import keras
 import cv2
 import traceback
 
+# Custom code to handle memory allocation problem
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+config = tf.ConfigProto()
+# dynamically grow GPU memory
+config.gpu_options.allow_growth = True
+set_session(tf.Session(config=config))
+
 from src.keras_utils 			import load_model
 from glob 						import glob
 from os.path 					import splitext, basename
