@@ -1,0 +1,10 @@
+name: generali_demo
+channels:
+  - anaconda
+dependencies:
+  - python=2.7
+  - tensorflow-gpu=1.13.1
+  - pip:
+    - keras==2.2.4
+    - opencv-python
+    - Flask

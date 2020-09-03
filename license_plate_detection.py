@@ -1,0 +1,61 @@
+import sys
+import cv2
+
+# # Custom code to handle memory allocation problem
+import tensorflow as tf
+from keras.backend.tensorflow_backend import set_session
+config = tf.ConfigProto()
+# dynamically grow GPU memory
+config.gpu_options.allow_growth = True
+set_session(tf.Session(config=config))
+
+from glob import glob
+from os.path import splitext, basename
+from src.utils import im2single
+from src.keras_utils import load_model, detect_lp
+from src.label import Shape, writeShapes
+
+
+def adjust_pts(pts,lroi):
+    return pts*lroi.wh().reshape((2,1)) + lroi.tl().reshape((2,1))
+
+
+def detect(model, input_dir, output_dir):
+    lp_threshold = .5
+
+    imgs_paths = glob('%s/*car.png' % input_dir)
+
+    print 'Searching for license plates using WPOD-NET'
+
+    for i, img_path in enumerate(imgs_paths):
+
+        print '\t Processing %s' % img_path
+
+        bname = splitext(basename(img_path))[0]
+        Ivehicle = cv2.imread(img_path)
+
+        ratio = float(max(Ivehicle.shape[:2])) / min(Ivehicle.shape[:2])
+        side = int(ratio * 288.)
+        bound_dim = min(side + (side % (2 ** 4)), 608)
+        print "\t\tBound dim: %d, ratio: %f" % (bound_dim, ratio)
+
+        Llp, LlpImgs, _ = detect_lp(model, im2single(Ivehicle), bound_dim, 2 ** 4, (240, 80), lp_threshold)
+
+        if len(LlpImgs):
+            Ilp = LlpImgs[0]
+            Ilp = cv2.cvtColor(Ilp, cv2.COLOR_BGR2GRAY)
+            Ilp = cv2.cvtColor(Ilp, cv2.COLOR_GRAY2BGR)
+
+            s = Shape(Llp[0].pts)
+
+            cv2.imwrite('%s/%s_lp.png' % (output_dir, bname), Ilp * 255.)
+            writeShapes('%s/%s_lp.txt' % (output_dir, bname), [s])
+
+
+if __name__ == '__main__':
+    input_dir = sys.argv[1]
+
+    wpod_net_path = sys.argv[2]
+    wpod_net = load_model(wpod_net_path)
+
+    detect(wpod_net, input_dir, input_dir)
