@@ -3,6 +3,7 @@ CUDNN=0
 OPENCV=0
 OPENMP=1
 DEBUG=0
+LIBSO=1
 
 ARCH= -gencode arch=compute_30,code=sm_30 \
       -gencode arch=compute_35,code=sm_35 \

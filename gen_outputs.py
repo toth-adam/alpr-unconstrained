@@ -52,7 +52,7 @@ def generate_outputs(input_dir, output_dir):
                         sys.stdout.write(',%s' % lp_str)
 
         cv2.imwrite('%s/%s_output.png' % (output_dir, bname), I)
-        sys.stdout.write('\n')
+        # sys.stdout.write('\n')
 
 
 if __name__ == "__main__":

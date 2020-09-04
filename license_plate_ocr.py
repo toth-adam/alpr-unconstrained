@@ -65,9 +65,8 @@ def lp_ocr(input_dir):
         traceback.print_exc()
         sys.exit(1)
 
-    sys.exit(0)
-
 
 if __name__ == '__main__':
     input_dir = sys.argv[1]
     lp_ocr(input_dir)
+    sys.exit(0)

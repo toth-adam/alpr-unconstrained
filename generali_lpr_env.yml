@@ -6,5 +6,5 @@ dependencies:
   - tensorflow-gpu=1.13.1
   - pip:
     - keras==2.2.4
-    - opencv-python
+    - opencv-python==4.2.0.32
     - Flask

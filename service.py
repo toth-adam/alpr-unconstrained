@@ -8,19 +8,21 @@ from flask import Flask
 import tensorflow as tf
 from keras.backend.tensorflow_backend import set_session
 
-from src.keras_utils import load_model
-from gen_outputs import generate_outputs
-from stdout_capture import Capturing
-from license_plate_ocr import lp_ocr
-from license_plate_detection import detect
-
 # Custom code to handle memory allocation problem
 config = tf.ConfigProto()
 # dynamically grow GPU memory
 config.gpu_options.allow_growth = True
 set_session(tf.Session(config=config))
 
+from src.keras_utils import load_model
+from gen_outputs import generate_outputs
+from stdout_capture import Capturing
+from license_plate_ocr import lp_ocr
+from license_plate_detection import detect
 
+# Necessary for some thread safety stuff, dont really looked into it
+global graph
+graph = tf.get_default_graph()
 WPOD_NET = load_model("./data/lp-detector/wpod-net_update1.h5")
 
 app = Flask(__name__)
@@ -28,7 +30,7 @@ app = Flask(__name__)
 # RUN_SCRIPT_FOLDER = "/alpr-unconstrained"
 CASE_FOLDER_NAMES = ["0_case", "1_case", "2_case"]
 MAIN_FOLDER_PATH = "/mnt"
-# MAIN_FOLDER_PATH = "/home/istvanmo/Lexunit_related/generali_adatok/main_folder_mock"
+# MAIN_FOLDER_PATH = "/home/atoth/temp/generali/prod_test/test"
 
 
 @app.route('/lpr/<session_id>')
@@ -63,8 +65,8 @@ def run_lpr(session_id):
                 src = join(case_folder_path, img_name)
                 dst = join(bulk_images_folder, img_name)
                 copyfile(src, dst)
-
-    detect(WPOD_NET, bulk_images_folder, bulk_images_folder)
+    with graph.as_default():
+        detect(WPOD_NET, bulk_images_folder, bulk_images_folder)
 
     # change working directory
     # os.chdir(RUN_SCRIPT_FOLDER)
