@@ -116,4 +116,4 @@ def run_lpr(session_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=6000)
+    app.run(host='0.0.0.0', port=5000)
