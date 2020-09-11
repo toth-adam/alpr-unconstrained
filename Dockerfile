@@ -39,7 +39,7 @@ COPY . .
 
 WORKDIR /alpr-unconstrained/darknet
 
-RUN sed -i 's/GPU=0/GPU=1/g' Makefile
+#RUN sed -i 's/GPU=0/GPU=1/g' Makefile
 
 RUN make
 

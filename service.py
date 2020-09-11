@@ -4,15 +4,18 @@ from shutil import copyfile
 from glob import glob
 from io import open
 
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 from flask import Flask
 import tensorflow as tf
-from keras.backend.tensorflow_backend import set_session
+# from keras.backend.tensorflow_backend import set_session
 
 # Custom code to handle memory allocation problem
-config = tf.ConfigProto()
+# config = tf.ConfigProto()
 # dynamically grow GPU memory
-config.gpu_options.allow_growth = True
-set_session(tf.Session(config=config))
+# config.gpu_options.allow_growth = True
+# set_session(tf.Session(config=config))
 
 from src.keras_utils import load_model
 from gen_outputs import generate_outputs

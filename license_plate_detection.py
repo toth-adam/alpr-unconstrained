@@ -15,7 +15,7 @@ def adjust_pts(pts,lroi):
 def detect(model, input_dir, output_dir):
     lp_threshold = .5
 
-    imgs_paths = glob('%s/*car.png' % input_dir)
+    imgs_paths = glob('%s/*car.jpg' % input_dir)
 
     print 'Searching for license plates using WPOD-NET'
 
